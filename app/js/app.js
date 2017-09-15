@@ -122,10 +122,17 @@ ELRCMaker.prototype._setupUI = function() {
                 var theFilename = data.files[i].fileName;
                 var isAudio = data.files[i].type.indexOf('audio/')==0;
                 fileReader.onload = function(e) {
-                    this$App.loadMedia(e.target.result, theFilename);
+                    if (isAudio) {
+                      this$App.loadMedia("data:audio/mp3;base64," + window.btoa(e.target.result), theFilename);
+                    } else {
+                      this$App.loadMedia("data:video/mp4;base64," + window.btoa(e.target.result), theFilename);
+                    }
+                    
                     this$App.setVideoMode(!isAudio);
                 };
-                fileReader.readAsDataURL(data.files[i]);
+              	//old readAsDataURL caused file to be truncated 
+                //fileReader.readAsDataURL(data.files[i]);
+              fileReader.readAsBinaryString(data.files[i]);
             }
             // Assume a text file
             else {
@@ -226,7 +233,7 @@ ELRCMaker.prototype.setVideoMode = function(on_or_off) {
  * @param lyrics
  */
 ELRCMaker.prototype.loadLyrics = function(lyrics) {
-  console.log(lyrics);
+
     if (!(lyrics instanceof Lyrics))
         lyrics = Lyrics.fromText(lyrics, this.media.duration);
     this.lyrics = lyrics;
