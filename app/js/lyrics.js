@@ -140,29 +140,37 @@ Lyrics.prototype.getApproximateTime = function(index)
 
 /**
  * Export to Enhanced LRC.
- *
- * Since we don't store any "line" information per se, we have to determine
- * where to break the word sequence in lines. Sentence boundaries and longer
- * than average time distances could be considered. TODO: Currently, we simply
- * split after a fixed number of words.
  */
 Lyrics.prototype.toELRC = function() {
     var result = '';
-    var wordsInLine = 0;
+    var isNewLine = false;
+    var isFirstWord = true;
     for (var i=0; i<this.length; i++) {
         var word = this[i];
+        var tmpWord = "";
+      
+      	if (word.text.includes("<br>")) {
+              tmpWord = word.text.replace("<br>","");
+        } else {
+          tmpWord = word.text;
+        }
 
-        // Start a new line when: This is the first line, OR: After 10 words
-        // but only if the word is timed.
-        if (!wordsInLine || (wordsInLine >= 10 && word.time)) {
-            wordsInLine = 0;
+        // Start a new line when: This is the first line, OR: is the word after a newline
+        if (isNewLine || isFirstWord) {
             result += '\n['+Lyrics.toTimer((word.time || 0))+']';
         }
-        else if (word.time)
-            result += ' <'+Lyrics.toTimer(word.time)+'>';
+        else if (word.time) {
+          result += ' <'+Lyrics.toTimer(word.time)+'>';
+        }
+      
+       if (word.text.includes("<br>") && word.time) {
+        isNewLine = true;
+      } else {
+        isNewLine = false
+      }
 
-        result += ' ' + word.text;
-        wordsInLine += 1;
+        result += ' ' + tmpWord;
+      isFirstWord = false;
     }
     return result;
 };
@@ -202,8 +210,11 @@ Lyrics.fromJSON = function(json, duration) {
  * @return {Lyrics}
  */
 Lyrics.fromText = function(text, duration) {
+    //add <br> tag to track newline and display newline on gui
+    text = text.replace(/(?:\r\n|\r|\n)/g, '<br>\n');
     var splitted = $.map(text.split(/\s+/g), function(item) {
-        if (item)
+      // do not add if blank word or line
+        if (item && item != "<br>")
             return {text: item, time: null};
     });
     var lyrics = new Lyrics(duration);

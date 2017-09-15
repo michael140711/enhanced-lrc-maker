@@ -226,10 +226,14 @@ ELRCMaker.prototype.setVideoMode = function(on_or_off) {
  * @param lyrics
  */
 ELRCMaker.prototype.loadLyrics = function(lyrics) {
+  console.log(lyrics);
     if (!(lyrics instanceof Lyrics))
         lyrics = Lyrics.fromText(lyrics, this.media.duration);
     this.lyrics = lyrics;
     this.lyricsBox.setLyrics(lyrics);
+  
+  console.log(this.lyrics);
+  
 
     // Store in local storage, so it won't be lost in reload
     //localStorage['lyrics'] = JSON.stringify(lyrics);
