@@ -27,14 +27,14 @@ ELRCMaker = function() {
     this.shortcuts = Shortcuts(this);
 
     // Load data from localStorage if there is anything
-    if (localStorage['lyrics']) {
-        $('#introduction').hide();
-        $('#lyrics').show();
-        this.loadLyrics(Lyrics.fromJSON(localStorage['lyrics'], media.duration));
-    }
-    if (localStorage['media']) {
-        this.loadMedia(localStorage['media'], localStorage['mediaFilename']);
-    }
+    //if (localStorage['lyrics']) {
+        //$('#introduction').hide();
+        //$('#lyrics').show();
+        //this.loadLyrics(Lyrics.fromJSON(localStorage['lyrics'], media.duration));
+    //}
+    //if (localStorage['media']) {
+        //this.loadMedia(localStorage['media'], localStorage['mediaFilename']);
+    //}
 };
 
 
@@ -198,8 +198,8 @@ ELRCMaker.prototype.loadMedia = function(url, filename, initial) {
     //    localStorage['audio'] = url;
     //    localStorage['audioFilename'] = filename;
     //}
-    localStorage.removeItem('audio');
-    localStorage.removeItem('audioFilename');
+    //localStorage.removeItem('audio');
+    //localStorage.removeItem('audioFilename');
 };
 
 
@@ -232,10 +232,10 @@ ELRCMaker.prototype.loadLyrics = function(lyrics) {
     this.lyricsBox.setLyrics(lyrics);
 
     // Store in local storage, so it won't be lost in reload
-    localStorage['lyrics'] = JSON.stringify(lyrics);
+    //localStorage['lyrics'] = JSON.stringify(lyrics);
     // Auto-save feature
     this.lyrics.on('timeChanged', function(index, time) {
-        localStorage['lyrics'] = JSON.stringify(lyrics);
+        //localStorage['lyrics'] = JSON.stringify(lyrics);
     });
 
     // Hide introduction, show, show lyrics
