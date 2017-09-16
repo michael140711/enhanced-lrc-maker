@@ -60,6 +60,11 @@ ELRCMaker.prototype._setupUI = function() {
     media.addEventListener('timeupdate', updatePosition);
     media.addEventListener('loadedmetadata', updatePosition);
     updatePosition();
+  
+    setInterval(function () {
+      updatePosition();
+    }
+                               , 30);
 
     // Setup toolbar buttons
     $('.import-lyrics').click(function() {

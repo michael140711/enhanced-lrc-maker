@@ -211,11 +211,11 @@ Lyrics.fromJSON = function(json, duration) {
  */
 Lyrics.fromText = function(text, duration) {
     //add <br> tag to track newline and display newline on gui
-    text = text.replace(/(?:\r\n|\r|\n)/g, '<br>\n');
+    text = text.replace(/ +/g, " ").replace(/　/g,"").trim().replace(/(?:\r\n|\r|\n)/g, '<br>\n');
     var splitted = $.map(text.split(/\s+/g), function(item) {
       // do not add if blank word or line
         if (item && item != "<br>")
-            return {text: item, time: null};
+            return {text: item.trim(), time: null};
     });
     var lyrics = new Lyrics(duration);
     lyrics.push.apply(lyrics, splitted);
