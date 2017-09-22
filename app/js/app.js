@@ -239,8 +239,13 @@ ELRCMaker.prototype.setVideoMode = function(on_or_off) {
  */
 ELRCMaker.prototype.loadLyrics = function(lyrics) {
 
-    if (!(lyrics instanceof Lyrics))
+    if (!(lyrics instanceof Lyrics)) {
+      if (document.getElementById("plainText").checked) {
         lyrics = Lyrics.fromText(lyrics, this.media.duration);
+      } else if (document.getElementById("LRC").checked) {
+        lyrics = Lyrics.fromLRC(lyrics, this.media.duration);
+      }
+    }
     this.lyrics = lyrics;
     this.lyricsBox.setLyrics(lyrics);
   

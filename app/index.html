@@ -1,216 +1,306 @@
 <!DOCTYPE HTML>
 <html>
-<head>
+  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
     <meta name="viewport" content="width=720,maximum-scale=1.0">
-    <title>Enhanced LRC Maker</title>
+    <title>Enhanced LRC Maker
+    </title>
     <link rel="stylesheet" type="text/css" href="gen/screen.css">
-</head>
-<body>
-
-
-<div id="controls">
-    <div>
+  </head>
+  <body>
+    <div id="controls">
+      <div>
         <div class="container">
-            <button class='faster'>Faster</button>
-            <button class='slower'>Slower</button>
-            Speed: <span class='speed'>1.0</span> &bull;
-            Position: <span class='position'>-</span>
-
-            <ul>
-                <li><a href='#' class='import-lyrics'>Import</a></li>
-                <li><a href='#' class='export'>
-                    <i class="icon-tag icon-white"></i> Export
-                </a></li>
-                <li><a href='#' class='show-help'>Help</a></li>
-            </ul>
+          <button class='faster'>Faster
+          </button>
+          <button class='slower'>Slower
+          </button>
+          Speed: 
+          <span class='speed'>1.0
+          </span> &bull;
+          Position: 
+          <span class='position'>-
+          </span>
+          <ul>
+            <li>
+              <a href='#' class='import-lyrics'>Import
+              </a>
+            </li>
+            <li>
+              <a href='#' class='export'>
+                <i class="icon-tag icon-white">
+                </i> Export
+              </a>
+            </li>
+            <li>
+              <a href='#' class='show-help'>Help
+              </a>
+            </li>
+          </ul>
         </div>
+      </div>
     </div>
-</div>
-
-<video controls="controls">
-</video>
-
-
-<div class="container">
-
-    <div id="lyrics"></div>
-
-    <div id="introduction">
-        <h1>Maker of Enhanced LRCs</h1>
+    <video controls="controls">
+    </video>
+    <div class="container">
+      <div id="lyrics">
+      </div>
+      <div id="introduction">
+        <h1>Maker of Enhanced LRCs
+        </h1>
         <p>This tool will help you create
-            <a href="http://en.wikipedia.org/wiki/LRC_(file_format)#Enhanced_format">Enhanced LRC files</a>
-            (where every word can be assigned a timestamp).
+          <a href="http://en.wikipedia.org/wiki/LRC_(file_format)#Enhanced_format">Enhanced LRC files
+          </a>
+          (where every word can be assigned a timestamp).
         </p>
         <p>
-            After loading both an audio file and the lyrics text, you use
-            mouse or keyboard to connect the correct word with the current
-            playing position.
+          After loading both an audio file and the lyrics text, you use
+          mouse or keyboard to connect the correct word with the current
+          playing position.
         </p>
         <p>
-            Start by dragging & dropping an audio and a text file from your
-            computer into this window. You can also load lyrics using the
-            <em>Import</em> feature.
+          Start by dragging & dropping an audio and a text file from your
+          computer into this window. You can also load lyrics using the
+          <em>Import
+          </em> feature.
         </p>
         <p>
-            <a class="import-lyrics">
-              Import lyrics
-            </a>
-            <a class="show-help">
-              Show detailed Help
-            </a>
-          </p>
+          <a class="import-lyrics">
+            Import lyrics
+          </a>
+          <a class="show-help">
+            Show detailed Help
+          </a>
+        </p>
+      </div>
     </div>
-</div>
-
-
-<div id="help" class="modal">
-    <div class="header">
-        <button class="close" data-dismiss="modal">×</button>
-        <h3>ELRC Maker Help</h3>
-    </div>
-    <div class="body">
+    <div id="help" class="modal">
+      <div class="header">
+        <button class="close" data-dismiss="modal">×
+        </button>
+        <h3>ELRC Maker Help
+        </h3>
+      </div>
+      <div class="body">
         <p>
-            The general principle is that you load a text file with the
-            subtitles/lyrics, and you load an audio file. While playing the
-            audio file with reduced speed, you assigned each word with the
-            current playing position.
+          The general principle is that you load a text file with the
+          subtitles/lyrics, and you load an audio file. While playing the
+          audio file with reduced speed, you assigned each word with the
+          current playing position.
         </p>
         <p>
-            This can be done using the mouse, by simply clicking the word, or
-            by using the keyboard, which advances a <em>keyboard cursor</em>
-            through the text.
+          This can be done using the mouse, by simply clicking the word, or
+          by using the keyboard, which advances a 
+          <em>keyboard cursor
+          </em>
+          through the text.
         </p>
         <p>
-            The current word based on the timestamps already set will be
-            highlighted in green color. If a word does not have a timestamp
-            assigned, it's position will be guessed based on the timestamps
-            already set.
+          The current word based on the timestamps already set will be
+          highlighted in green color. If a word does not have a timestamp
+          assigned, it's position will be guessed based on the timestamps
+          already set.
         </p>
-        <h4>Getting started</h4>
+        <h4>Getting started
+        </h4>
         <p>
-            Load an audio file dragging it from your local computer and
-            dropping it inside the browser window. Load lyrics by dragging
-            a text file by dragging and dropping a text file from your local
-            computer. You can also load lyrics via the <em>Import</em> menu
-            options.
+          Load an audio file dragging it from your local computer and
+          dropping it inside the browser window. Load lyrics by dragging
+          a text file by dragging and dropping a text file from your local
+          computer. You can also load lyrics via the 
+          <em>Import
+          </em> menu
+          options.
         </p>
         <p>
           If you are having issues with the audio resetting/skipping, try loading the file again. If that fails try encoding the file in a lower bit-rate.
-      </p>
-        <h4>Mouse mode</h4>
-        <dl>
-            <dt>Left click on a word</dt>
-                <dd>Associate the word with the current timestamp
-                    (only while playing). This also moves the keyboard cursor.
-                </dd>
-            <dt>Right click on a word</dt>
-                <dd>Set the play position to shortly before the word. If the
-                    word has no time attached, the position will be guessed.
-                </dd>
-        </dl>
-        <h4>Keyboard mode</h4>
-        <dl>
-            <dt><kbd title="Left Arrow">←</kbd> /
-                <kbd title="Right Arrow">→</kbd></dt>
-            <dd>Move the keyboard cursor forward/backwards to the text.
-            </dd>
-
-            <dt><kbd>Space</kbd></dt>
-            <dd>Associated the word the keyboard cursor is at with the
-                current play position. Move the keyboard cursor one word
-                forward.
-            </dd>
-
-            <dt><kbd>Del</kbd></dt>
-            <dd>Remove the timestamp associated with the word at the
-                keyboard cursor position. Move keyboard cursor one back.
-            </dd>
-        </dl>
-        <h4>Global shortcuts</h4>
-        <dl>
-            <dt><kbd>Return</kbd> or <kbd>Space</kbd></dt>
-            <dd>Start to play.</dd>
-
-            <dt><kbd>Return</kbd> or <kbd>Ctrl</kbd>+<kbd>Space</kbd></dt>
-            <dd>Stop to play.</dd>
-
-            <dt><kbd>Ctrl</kbd>+<kbd title="Right Arrow">→</kbd> or
-                <kbd>d</kbd> or <kbd>Numpad 6</kbd></dt>
-            <dd>Skip play position forward.</dd>
-
-            <dt><kbd>Ctrl</kbd>+<kbd title="Left Arrow">←</kbd> or
-                <kbd>a</kbd> or <kbd>Numpad 4</kbd></dt>
-            <dd>Skip play position backward.</dd>
-
-            <dt><kbd title="Up Arrow">↑</kbd> /
-                 <kbd title="Down Arrow">↓</kbd></dt>
-            <dd>Increase / decrease the play speed.</dd>
-        </dl>
-        <h4>About</h4>
-        <p>
-        The code is available on Github: &nbsp;
-        <iframe src="http://ghbtns.com/github-btn.html?user=schindlershadow&repo=elrc-maker&type=fork"
-                allowtransparency="true" frameborder="0" scrolling="0" width="62px" height="20px"></iframe>
         </p>
-    </div>
-    <div class="footer">
-        <a href="#" class="button">Close</a>
-    </div>
-</div>
-
-<div id="import" class="modal">
-    <div class="header">
-        <button class="close" data-dismiss="modal">×</button>
-        <h3>Import</h3>
-    </div>
-    <div class="body">
+        <h4>Mouse mode
+        </h4>
+        <dl>
+          <dt>Left click on a word
+          </dt>
+          <dd>Associate the word with the current timestamp
+            (only while playing). This also moves the keyboard cursor.
+          </dd>
+          <dt>Right click on a word
+          </dt>
+          <dd>Set the play position to shortly before the word. If the
+            word has no time attached, the position will be guessed.
+          </dd>
+        </dl>
+        <h4>Keyboard mode
+        </h4>
+        <dl>
+          <dt>
+            <kbd title="Left Arrow">←
+            </kbd> /
+            <kbd title="Right Arrow">→
+            </kbd>
+          </dt>
+          <dd>Move the keyboard cursor forward/backwards to the text.
+          </dd>
+          <dt>
+            <kbd>Space
+            </kbd>
+          </dt>
+          <dd>Associated the word the keyboard cursor is at with the
+            current play position. Move the keyboard cursor one word
+            forward.
+          </dd>
+          <dt>
+            <kbd>Del
+            </kbd>
+          </dt>
+          <dd>Remove the timestamp associated with the word at the
+            keyboard cursor position. Move keyboard cursor one back.
+          </dd>
+        </dl>
+        <h4>Global shortcuts
+        </h4>
+        <dl>
+          <dt>
+            <kbd>Return
+            </kbd> or 
+            <kbd>Space
+            </kbd>
+          </dt>
+          <dd>Start to play.
+          </dd>
+          <dt>
+            <kbd>Return
+            </kbd> or 
+            <kbd>Ctrl
+            </kbd>+
+            <kbd>Space
+            </kbd>
+          </dt>
+          <dd>Stop to play.
+          </dd>
+          <dt>
+            <kbd>Ctrl
+            </kbd>+
+            <kbd title="Right Arrow">→
+            </kbd> or
+            <kbd>d
+            </kbd> or 
+            <kbd>Numpad 6
+            </kbd>
+          </dt>
+          <dd>Skip play position forward.
+          </dd>
+          <dt>
+            <kbd>Ctrl
+            </kbd>+
+            <kbd title="Left Arrow">←
+            </kbd> or
+            <kbd>a
+            </kbd> or 
+            <kbd>Numpad 4
+            </kbd>
+          </dt>
+          <dd>Skip play position backward.
+          </dd>
+          <dt>
+            <kbd title="Up Arrow">↑
+            </kbd> /
+            <kbd title="Down Arrow">↓
+            </kbd>
+          </dt>
+          <dd>Increase / decrease the play speed.
+          </dd>
+        </dl>
+        <h4>About
+        </h4>
         <p>
-            Paste some text here. <br>
-            <em><i class="icon-exclamation-sign"></i>This
+          The code is available on Github: &nbsp;
+          <iframe src="http://ghbtns.com/github-btn.html?user=schindlershadow&repo=elrc-maker&type=fork"
+                  allowtransparency="true" frameborder="0" scrolling="0" width="62px" height="20px">
+          </iframe>
+        </p>
+      </div>
+      <div class="footer">
+        <a href="#" class="button">Close
+        </a>
+      </div>
+    </div>
+    <div id="import" class="modal">
+      <div class="header">
+        <button class="close" data-dismiss="modal">×
+        </button>
+        <h3>Import
+        </h3>
+      </div>
+      <div class="body">
+        <p>
+          Paste some text here. 
+          <br>
+          <em>
+            <i class="icon-exclamation-sign">
+            </i>This
             will overwrite your current lyrics, and remove all timestamps
-            that have already been assigned!</em>
+            that have already been assigned!
+          </em>
         </p>
-        <textarea></textarea><br>
+        <label class="radio-inline">
+          <input type="radio" name="optradio" id="plainText" checked>Plain-Text
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="optradio" id="LRC">LRC
+        </label>
+        <textarea>
+        </textarea>
+        <br>
+      </div>
+      <div class="footer">
+        <a href="#" class="button action">Parse & Load
+        </a>
+      </div>
     </div>
-    <div class="footer">
-        <a href="#" class="button action">Parse & Load</a>
-    </div>
-</div>
-
-
-<div id="export" class="modal">
-    <div class="header">
-        <button class="close" data-dismiss="modal">×</button>
-        <h3>Export</h3>
-    </div>
-    <div class="body">
+    <div id="export" class="modal">
+      <div class="header">
+        <button class="close" data-dismiss="modal">×
+        </button>
+        <h3>Export
+        </h3>
+      </div>
+      <div class="body">
         <p>
-            Your file in ELRC format.<br>
+          Your file in ELRC format.
+          <br>
         </p>
-        <textarea></textarea><br>
+        <textarea>
+        </textarea>
+        <br>
+      </div>
+      <div class="footer">
+        <a href="#" class="button action" data-dismiss="modal">Download
+        </a>
+      </div>
     </div>
-    <div class="footer">
-        <a href="#" class="button action" data-dismiss="modal">Download</a>
-    </div>
-</div>
-
-
-
-<script src="js/jquery.min.js"></script>
-
-<script src="js//EventEmitter.js"></script>
-<script src="js/Blob.js"></script>
-<script src="js/FileSaver.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/shortcuts.js"></script>
-<script src="js/lyrics.js"></script>
-<script src="js/app.js"></script>
-<script>
-    $(function() {
+    <script src="js/jquery.min.js">
+    </script>
+    <script src="js//EventEmitter.js">
+    </script>
+    <script src="js/Blob.js">
+    </script>
+    <script src="js/FileSaver.js">
+    </script>
+    <script src="js/bootstrap.min.js">
+    </script>
+    <script src="js/utils.js">
+    </script>
+    <script src="js/shortcuts.js">
+    </script>
+    <script src="js/lyrics.js">
+    </script>
+    <script src="js/app.js">
+    </script>
+    <script>
+      $(function() {
         window.Application = new ELRCMaker();
-    });
-</script>
-</body>
+      }
+       );
+    </script>
+  </body>
 </html>
