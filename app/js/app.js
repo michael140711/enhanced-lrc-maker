@@ -75,7 +75,7 @@ ELRCMaker.prototype._setupUI = function() {
         if (this$App.lyrics && this$App.lyrics.length) {
             $('#import textarea').val(
                     $.map(this$App.lyrics,
-                          function(i) {return i.text}).join(' '));
+                          function(i) {return i.text.replace("<br>", "\n")}).join(''));
         }
         $('#import').modal();
     });
