@@ -23,6 +23,10 @@
           </span>
           <ul>
             <li>
+              <a href='#' class='audio-settings'>Audio
+              </a>
+            </li>
+            <li>
               <a href='#' class='import-lyrics'>Import
               </a>
             </li>
@@ -275,6 +279,46 @@
       </div>
       <div class="footer">
         <a href="#" class="button action" data-dismiss="modal">Download
+        </a>
+      </div>
+    </div>
+    <div id="audioSettings" class="modal">
+      <div class="header">
+        <button class="close" data-dismiss="modal">×
+        </button>
+        <h3>Audio Settings
+        </h3>
+      </div>
+      <div class="body">
+        <p>
+          Change settings for the audio.
+          <br>
+        </p>
+        <input type="text" class="form-control" id="audioURL">
+        <button type="button" class="btn importAudio">Import music from URL</button>
+        <br>
+      </div>
+      <div class="footer">
+        <a href="#" class="button" data-dismiss="modal">Close
+        </a>
+      </div>
+    </div>
+    <div id="searchResults" class="modal">
+      <div class="header">
+        <button class="close" data-dismiss="modal">×
+        </button>
+        <h3>Search results
+        </h3>
+      </div>
+      <div class="body" id="searchResultsBody">
+        <p>
+          
+          <br>
+        </p>
+        <br>
+      </div>
+      <div class="footer">
+        <a href="#" class="button" data-dismiss="modal">Close
         </a>
       </div>
     </div>
