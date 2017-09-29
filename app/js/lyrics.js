@@ -273,7 +273,7 @@ Lyrics.fromLRC = function(text, duration) {
       for (var i = 0; i < lyrics.length; i++) {
         var tmparry = $.map(lyrics[i].split(/\s+/g), function(item, index) {
         if (item && item != " END<br>") 
-          return {text: item.trim(), time: tim[index] + offset};
+          return {text: item.trim(), time: tim[i] + offset + (index/100)};
       });
         splitted = splitted.concat(tmparry);
       }
