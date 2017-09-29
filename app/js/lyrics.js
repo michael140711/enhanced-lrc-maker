@@ -222,13 +222,12 @@ Lyrics.fromLRC = function(text, duration) {
   var lyrics = [];
   text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").replace(/^\s*[\r\n]/gm,"").trim().replace(/(?:\r\n|\r|\n)/g, '<br>\n') + "<br>\n";
   if (isElrc) {
-      if (text.match(/(?:\<)(\d*)(?::)(\S*?)(?:\>) END<br>/g)) {
+      if (!text.match(/(?:\<)(\d*)(?::)(\S*?)(?:\>)<br>/g)) {
         //if missing add a time tag to the end
         var regex = /(?:\<)(\d*)(?::)(\S*?)(?:\>) (\S+?)<br>/g;
         for (var i = 0; matches = regex.exec(text); i++){
           text = text.replace(matches[0], " <" + matches[1] + ":" + matches[2] + "> " + matches[3] + " <" + matches[1] + ":" + (parseFloat(matches[2]) + 0.1) + "> END<br>");
         }
-        
       }
     } else {
       text = text.replace(/<br>/g," END<br>")
