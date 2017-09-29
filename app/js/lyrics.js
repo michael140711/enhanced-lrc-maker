@@ -195,7 +195,7 @@ Lyrics.fromText = function(text, duration) {
     // do not add if blank word or line
     if (item && item != "<br>")
       return {
-        text: item.trim(), time: null};
+        text: item.trim(), time: duration};
   }
                       );
   var lyrics = new Lyrics(duration);
