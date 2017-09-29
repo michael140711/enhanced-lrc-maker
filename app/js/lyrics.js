@@ -133,7 +133,7 @@ Lyrics.prototype.toELRC = function() {
     var word = this[i];
     var tmpWord = "";
     if (word.text.includes("<br>")) {
-      tmpWord = word.text.replace("<br>","");
+      tmpWord = word.text.replace("END<br>","\n");
     }
     else {
       tmpWord = word.text;
@@ -189,11 +189,17 @@ Lyrics.fromJSON = function(json, duration) {
  * @return {Lyrics}
  */
 Lyrics.fromText = function(text, duration) {
+  if (!duration) {
+    duration = 1;
+  }
   //add <br> tag to track newline and display newline on gui
-  text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").trim().replace(/(?:\r\n|\r|\n)/g, '<br>\n');
+  text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").replace(/^\s*[\r\n]/gm,"").trim().replace(/(?:\r\n|\r|\n)/g, ' END<br>\n');
+  if (!(text.match(/END<br>\n$/g))) {
+    text += ' END<br>\n';
+  }
   var splitted = $.map(text.split(/\s+/g), function(item) {
     // do not add if blank word or line
-    if (item && item != "<br>")
+    if (item && item != " END<br>")
       return {
         text: item.trim(), time: duration};
   }
@@ -210,17 +216,32 @@ Lyrics.fromText = function(text, duration) {
  * @return {Lyrics}
  */
 Lyrics.fromLRC = function(text, duration) {
-  var isElrc = false;
+  var isElrc = (text.toString().match(/(?:\<)(\d*)(?::)(\S*?)(?:\>)/i) != null) ? true : false;;
   var offset = 0;
   var tim = [];
   var lyrics = [];
-  text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").trim().replace(/(?:\r\n|\r|\n)/g, '<br>\n');
+  text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").replace(/^\s*[\r\n]/gm,"").trim().replace(/(?:\r\n|\r|\n)/g, '<br>\n') + "<br>\n";
+  if (isElrc) {
+      if (text.match(/(?:\<)(\d*)(?::)(\S*?)(?:\>) END<br>/g)) {
+        //if missing add a time tag to the end
+        var regex = /(?:\<)(\d*)(?::)(\S*?)(?:\>) (\S+?)<br>/g;
+        for (var i = 0; matches = regex.exec(text); i++){
+          text = text.replace(matches[0], " <" + matches[1] + ":" + matches[2] + "> " + matches[3] + " <" + matches[1] + ":" + (parseFloat(matches[2]) + 0.1) + "> END<br>");
+        }
+        
+      }
+    } else {
+      text = text.replace(/<br>/g," END<br>")
+      if (!(text.match(/END<br>\n$/g))) {
+    	text += ' END<br>\n';
+      }
+    }
+  
   function defined(data) {
   		return data != 'undefined';
   }
   // parsing the Lyrics 
   function processLyrics(allText) {
-    
     var hasOffset = (allText.match(/(?:\[offset:)(.*)(?:])/i) != null) ? true : false;
     if(hasOffset) {
       var regex = /(?:\[offset:)(.*)(?:])/g;
@@ -231,7 +252,7 @@ Lyrics.fromLRC = function(text, duration) {
     }
     // This will only divide with respect to new lines 
     allTextLines = allText.split(/\r\n|\n/);
-    isElrc = (allTextLines.toString().match(/(?:\<)(\d*)(?::)(\S*?)(?:\>)/i) != null) ? true : false;
+    //isElrc = (allTextLines.toString().match(/(?:\<)(\d*)(?::)(\S*?)(?:\>)/i) != null) ? true : false;
     next();
     tim = tim.filter(defined);
     lyrics = lyrics.filter(defined);
@@ -240,8 +261,10 @@ Lyrics.fromLRC = function(text, duration) {
       var splitted = [];
       for (var i = 0; i < lyrics.length; i++) {
         var tmparry = $.map(lyrics[i], function(item, index) {
-        if (item && item != "<br>") 
+        if (item && item != " END<br>") {
+          
           return {text: item.trim(), time: tim[i][index] + offset};
+        }
         });
         splitted = splitted.concat(tmparry);
       }
@@ -249,7 +272,7 @@ Lyrics.fromLRC = function(text, duration) {
       var splitted = [];
       for (var i = 0; i < lyrics.length; i++) {
         var tmparry = $.map(lyrics[i].split(/\s+/g), function(item, index) {
-        if (item && item != "<br>") 
+        if (item && item != " END<br>") 
           return {text: item.trim(), time: tim[index] + offset};
       });
         splitted = splitted.concat(tmparry);
@@ -287,6 +310,7 @@ Lyrics.fromLRC = function(text, duration) {
           if (line[6].match(/(?:\<)(\d*)(?::)(\S*?)(?:\>\n|\>$)/i)) {
             var last = line[6].match(/(?:\<)(\d*)(?::)(\S*?)(?:\>\n|\>$)/i);
             tim[i][tim[i].length] = (parseInt(last[1]) * 60) + parseFloat(last[2]);
+            lyrics[i][lyrics[i].length] = "END<br>";
             //console.log(tim[i][tim[i].length - 1]);
           }
         }
