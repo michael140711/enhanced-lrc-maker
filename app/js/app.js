@@ -304,5 +304,5 @@ ELRCMaker.prototype.setPlaybackRate = function(rate) {
     newRate += parseFloat(rate);
   newRate = Math.min(Math.max(newRate, 0.5), 4.0);
   this.media.playbackRate = newRate;
-  $('#controls .speed').text(newRate.toFixed(3));
+  $('#speed').text(newRate.toFixed(3));
 };
