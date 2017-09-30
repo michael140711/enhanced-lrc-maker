@@ -8,42 +8,59 @@
     <link rel="stylesheet" type="text/css" href="gen/screen.css">
   </head>
   <body>
-    <div id="controls">
-      <div>
-        <div class="container">
-          <button class='faster'>Faster
-          </button>
-          <button class='slower'>Slower
-          </button>
-          Speed: 
+    <div class="container-fluid" id="header" style="background-color:#222222;color:#fff;height:auto;text-align: center;">
+      <p>
+        Enhanced LRC Maker 
+      </p>
+    </div>
+    <nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="100">
+        <div class="container-fluid">
+
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" onclick="toggleHeader()" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar">
+          </span>
+          <span class="icon-bar">
+          </span>
+          <span class="icon-bar">
+          </span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <button class='faster btn navbar-btn'>Faster
+        </button>
+        <button class='slower btn navbar-btn'>Slower
+        </button>
+        <p class="navbar-text">Speed: 
           <span class='speed'>1.0
           </span> &bull;
-          Position: 
+        </p>
+        <p class="navbar-text">Position: 
           <span class='position'>-
           </span>
-          <ul>
-            <li>
-              <a href='#' class='audio-settings'>Audio
-              </a>
-            </li>
-            <li>
-              <a href='#' class='import-lyrics'>Import
-              </a>
-            </li>
-            <li>
-              <a href='#' class='export'>
-                <i class="icon-tag icon-white">
-                </i> Export
-              </a>
-            </li>
-            <li>
-              <a href='#' class='show-help'>Help
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+        </p>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href='#' class='audio-settings'>Audio
+            </a>
+          </li>
+          <li>
+            <a href='#' class='import-lyrics'>Import
+            </a>
+          </li>
+          <li>
+            <a href='#' class='export'>
+              <i class="icon-tag icon-white">
+              </i> Export
+            </a>
+          </li>
+          <li>
+            <a href='#' class='show-help'>Help
+            </a>
+          </li>
+        </ul>
+      </div></div>
+    </nav>
     <video controls="controls">
     </video>
     <div class="container">
@@ -78,14 +95,15 @@
         </p>
       </div>
     </div>
-    <div id="help" class="modal">
-      <div class="header">
-        <button class="close" data-dismiss="modal">×
-        </button>
-        <h3>ELRC Maker Help
-        </h3>
+    <div id="help" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">ELRC Maker Help
+        </h4>
       </div>
-      <div class="body">
+      <div class="modal-body">
         <p>
           The general principle is that you load a text file with the
           subtitles/lyrics, and you load an audio file. While playing the
@@ -223,19 +241,21 @@
           </iframe>
         </p>
       </div>
-      <div class="footer">
-        <a href="#" class="button">Close
-        </a>
-      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div></div></div>
     </div>
-    <div id="import" class="modal">
-      <div class="header">
-        <button class="close" data-dismiss="modal">×
-        </button>
-        <h3>Import
-        </h3>
+    <div id="import" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Import
+        </h4>
       </div>
-      <div class="body">
+      <div class="modal-body">
         <p>
           Paste some text here. 
           <br>
@@ -256,19 +276,21 @@
         </textarea>
         <br>
       </div>
-      <div class="footer">
-        <a href="#" class="button action">Parse & Load
-        </a>
-      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary button action" data-dismiss="modal">Parse & Load</button>
+      </div></div></div>
     </div>
-    <div id="export" class="modal">
-      <div class="header">
-        <button class="close" data-dismiss="modal">×
-        </button>
-        <h3>Export
-        </h3>
+    <div id="export" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Export
+        </h4>
       </div>
-      <div class="body">
+      <div class="modal-body">
         <p>
           Your file in ELRC format.
           <br>
@@ -277,38 +299,42 @@
         </textarea>
         <br>
       </div>
-      <div class="footer">
-        <a href="#" class="button action" data-dismiss="modal">Download
-        </a>
-      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary button action" data-dismiss="modal">Download</button>
+      </div></div></div>
     </div>
-    <div id="audioSettings" class="modal">
-      <div class="header">
-        <button class="close" data-dismiss="modal">×
-        </button>
-        <h3>Audio Settings
-        </h3>
+    <div id="audioSettings" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Audio Settings
+        </h4>
       </div>
-      <div class="body">
+      <div class="modal-body">
         <p>
           Change settings for the audio.
           <br>
         </p>
         <input type="text" class="form-control" id="audioURL" placeholder="http://">
-        <button type="button" class="btn importAudio">Import music from URL</button>
+        <button type="button" class="btn importAudio">Import music from URL
+        </button>
         <br>
         <input type="text" class="form-control" id="ID" placeholder="ID#">
-        <button type="button" class="btn importID">Import music and lyrics from Karaoke</button>
+        <button type="button" class="btn importID">Import music and lyrics from Karaoke
+        </button>
         <br>
       </div>
-      <div class="footer">
-        <a href="#" class="button" data-dismiss="modal">Close
-        </a>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
-    <script src="js/jquery.min.js">
-    </script>
-    <script src="js//EventEmitter.js">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/EventEmitter.js">
     </script>
     <script src="js/Blob.js">
     </script>
