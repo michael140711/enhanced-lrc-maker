@@ -14,52 +14,58 @@
       </p>
     </div>
     <nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="100">
-        <div class="container-fluid">
-
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" onclick="toggleHeader()" data-toggle="collapse" data-target="#myNavbar">
-          <span class="icon-bar">
-          </span>
-          <span class="icon-bar">
-          </span>
-          <span class="icon-bar">
-          </span>
-        </button>
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" onclick="toggleHeader()" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+            <span class="icon-bar">
+            </span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <button class='faster btn navbar-btn'>Faster
+          </button>
+          <button class='slower btn navbar-btn'>Slower
+          </button>
+          <p class="navbar-text">Speed: 
+            <span class='speed'>1.0
+            </span> &bull;
+          </p>
+          <p class="navbar-text">Position: 
+            <span class='position'>-
+            </span>
+          </p>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href='#' class='audio-settings'>
+                <i class="	glyphicon glyphicon-link">
+                </i> Remote
+              </a>
+            </li>
+            <li>
+              <a href='#' class='import-lyrics'>
+                <i class="	glyphicon glyphicon-import">
+                </i> Import
+              </a>
+            </li>
+            <li>
+              <a href='#' class='export'>
+                <i class="	glyphicon glyphicon-export">
+                </i> Export
+              </a>
+            </li>
+            <li>
+              <a href='#' class='show-help'>
+                <i class="	glyphicon glyphicon-question-sign">
+                </i> Help
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="collapse navbar-collapse" id="myNavbar">
-        <button class='faster btn navbar-btn'>Faster
-        </button>
-        <button class='slower btn navbar-btn'>Slower
-        </button>
-        <p class="navbar-text">Speed: 
-          <span class='speed'>1.0
-          </span> &bull;
-        </p>
-        <p class="navbar-text">Position: 
-          <span class='position'>-
-          </span>
-        </p>
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a href='#' class='audio-settings'>Audio
-            </a>
-          </li>
-          <li>
-            <a href='#' class='import-lyrics'>Import
-            </a>
-          </li>
-          <li>
-            <a href='#' class='export'>
-              <i class="icon-tag icon-white">
-              </i> Export
-            </a>
-          </li>
-          <li>
-            <a href='#' class='show-help'>Help
-            </a>
-          </li>
-        </ul>
-      </div></div>
     </nav>
     <video controls="controls">
     </video>
@@ -97,243 +103,277 @@
     </div>
     <div id="help" class="modal fade" role="dialog">
       <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">ELRC Maker Help
-        </h4>
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;
+            </button>
+            <h4 class="modal-title">ELRC Maker Help
+            </h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              The general principle is that you load a text file with the
+              subtitles/lyrics, and you load an audio file. While playing the
+              audio file with reduced speed, you assigned each word with the
+              current playing position.
+            </p>
+            <p>
+              This can be done using the mouse, by simply clicking the word, or
+              by using the keyboard, which advances a 
+              <em>keyboard cursor
+              </em>
+              through the text.
+            </p>
+            <p>
+              The current word based on the timestamps already set will be
+              highlighted in green color. If a word does not have a timestamp
+              assigned, it's position will be guessed based on the timestamps
+              already set.
+            </p>
+            <h4>Getting started
+            </h4>
+            <p>
+              Load an audio file dragging it from your local computer and
+              dropping it inside the browser window. Load lyrics by dragging
+              a text file by dragging and dropping a text file from your local
+              computer. You can also load lyrics via the 
+              <em>Import
+              </em> menu
+              options.
+            </p>
+            <p>
+              If you are having issues with the audio resetting/skipping, try loading the file again. If that fails try encoding the file in a lower bit-rate.
+            </p>
+            <h4>Mouse mode
+            </h4>
+            <dl>
+              <dt>Left click on a word
+              </dt>
+              <dd>Associate the word with the current timestamp
+                (only while playing). This also moves the keyboard cursor.
+              </dd>
+              <dt>Right click on a word
+              </dt>
+              <dd>Set the play position to shortly before the word. If the
+                word has no time attached, the position will be guessed.
+              </dd>
+            </dl>
+            <h4>Keyboard mode
+            </h4>
+            <dl>
+              <dt>
+                <kbd title="Left Arrow">←
+                </kbd> /
+                <kbd title="Right Arrow">→
+                </kbd>
+              </dt>
+              <dd>Move the keyboard cursor forward/backwards to the text.
+              </dd>
+              <dt>
+                <kbd>Space
+                </kbd>
+              </dt>
+              <dd>Associated the word the keyboard cursor is at with the
+                current play position. Move the keyboard cursor one word
+                forward.
+              </dd>
+              <dt>
+                <kbd>Del
+                </kbd>
+              </dt>
+              <dd>Remove the timestamp associated with the word at the
+                keyboard cursor position. Move keyboard cursor one back.
+              </dd>
+            </dl>
+            <h4>Global shortcuts
+            </h4>
+            <dl>
+              <dt>
+                <kbd>Return
+                </kbd> or 
+                <kbd>Space
+                </kbd>
+              </dt>
+              <dd>Start to play.
+              </dd>
+              <dt>
+                <kbd>Return
+                </kbd> or 
+                <kbd>Ctrl
+                </kbd>+
+                <kbd>Space
+                </kbd>
+              </dt>
+              <dd>Stop to play.
+              </dd>
+              <dt>
+                <kbd>Ctrl
+                </kbd>+
+                <kbd title="Right Arrow">→
+                </kbd> or
+                <kbd>d
+                </kbd> or 
+                <kbd>Numpad 6
+                </kbd>
+              </dt>
+              <dd>Skip play position forward.
+              </dd>
+              <dt>
+                <kbd>Ctrl
+                </kbd>+
+                <kbd title="Left Arrow">←
+                </kbd> or
+                <kbd>a
+                </kbd> or 
+                <kbd>Numpad 4
+                </kbd>
+              </dt>
+              <dd>Skip play position backward.
+              </dd>
+              <dt>
+                <kbd title="Up Arrow">↑
+                </kbd> /
+                <kbd title="Down Arrow">↓
+                </kbd>
+              </dt>
+              <dd>Increase / decrease the play speed.
+              </dd>
+            </dl>
+            <h4>About
+            </h4>
+            <p>
+              The code is available on Github: &nbsp;
+              <iframe src="http://ghbtns.com/github-btn.html?user=schindlershadow&repo=elrc-maker&type=fork"
+                      allowtransparency="true" frameborder="0" scrolling="0" width="62px" height="20px">
+              </iframe>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="modal-body">
-        <p>
-          The general principle is that you load a text file with the
-          subtitles/lyrics, and you load an audio file. While playing the
-          audio file with reduced speed, you assigned each word with the
-          current playing position.
-        </p>
-        <p>
-          This can be done using the mouse, by simply clicking the word, or
-          by using the keyboard, which advances a 
-          <em>keyboard cursor
-          </em>
-          through the text.
-        </p>
-        <p>
-          The current word based on the timestamps already set will be
-          highlighted in green color. If a word does not have a timestamp
-          assigned, it's position will be guessed based on the timestamps
-          already set.
-        </p>
-        <h4>Getting started
-        </h4>
-        <p>
-          Load an audio file dragging it from your local computer and
-          dropping it inside the browser window. Load lyrics by dragging
-          a text file by dragging and dropping a text file from your local
-          computer. You can also load lyrics via the 
-          <em>Import
-          </em> menu
-          options.
-        </p>
-        <p>
-          If you are having issues with the audio resetting/skipping, try loading the file again. If that fails try encoding the file in a lower bit-rate.
-        </p>
-        <h4>Mouse mode
-        </h4>
-        <dl>
-          <dt>Left click on a word
-          </dt>
-          <dd>Associate the word with the current timestamp
-            (only while playing). This also moves the keyboard cursor.
-          </dd>
-          <dt>Right click on a word
-          </dt>
-          <dd>Set the play position to shortly before the word. If the
-            word has no time attached, the position will be guessed.
-          </dd>
-        </dl>
-        <h4>Keyboard mode
-        </h4>
-        <dl>
-          <dt>
-            <kbd title="Left Arrow">←
-            </kbd> /
-            <kbd title="Right Arrow">→
-            </kbd>
-          </dt>
-          <dd>Move the keyboard cursor forward/backwards to the text.
-          </dd>
-          <dt>
-            <kbd>Space
-            </kbd>
-          </dt>
-          <dd>Associated the word the keyboard cursor is at with the
-            current play position. Move the keyboard cursor one word
-            forward.
-          </dd>
-          <dt>
-            <kbd>Del
-            </kbd>
-          </dt>
-          <dd>Remove the timestamp associated with the word at the
-            keyboard cursor position. Move keyboard cursor one back.
-          </dd>
-        </dl>
-        <h4>Global shortcuts
-        </h4>
-        <dl>
-          <dt>
-            <kbd>Return
-            </kbd> or 
-            <kbd>Space
-            </kbd>
-          </dt>
-          <dd>Start to play.
-          </dd>
-          <dt>
-            <kbd>Return
-            </kbd> or 
-            <kbd>Ctrl
-            </kbd>+
-            <kbd>Space
-            </kbd>
-          </dt>
-          <dd>Stop to play.
-          </dd>
-          <dt>
-            <kbd>Ctrl
-            </kbd>+
-            <kbd title="Right Arrow">→
-            </kbd> or
-            <kbd>d
-            </kbd> or 
-            <kbd>Numpad 6
-            </kbd>
-          </dt>
-          <dd>Skip play position forward.
-          </dd>
-          <dt>
-            <kbd>Ctrl
-            </kbd>+
-            <kbd title="Left Arrow">←
-            </kbd> or
-            <kbd>a
-            </kbd> or 
-            <kbd>Numpad 4
-            </kbd>
-          </dt>
-          <dd>Skip play position backward.
-          </dd>
-          <dt>
-            <kbd title="Up Arrow">↑
-            </kbd> /
-            <kbd title="Down Arrow">↓
-            </kbd>
-          </dt>
-          <dd>Increase / decrease the play speed.
-          </dd>
-        </dl>
-        <h4>About
-        </h4>
-        <p>
-          The code is available on Github: &nbsp;
-          <iframe src="http://ghbtns.com/github-btn.html?user=schindlershadow&repo=elrc-maker&type=fork"
-                  allowtransparency="true" frameborder="0" scrolling="0" width="62px" height="20px">
-          </iframe>
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div></div></div>
     </div>
     <div id="import" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Import
-        </h4>
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;
+            </button>
+            <h4 class="modal-title">Import
+            </h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              Paste some text here. 
+              <br>
+              <em>
+                <i class="icon-exclamation-sign">
+                </i>This
+                will overwrite your current lyrics, and remove all timestamps
+                that have already been assigned!
+              </em>
+            </p>
+            <label class="radio-inline">
+              <input type="radio" name="optradio" id="plainText" checked>Plain-Text
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="optradio" id="LRC">LRC
+            </label>
+            <textarea>
+            </textarea>
+            <br>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary button action" data-dismiss="modal">Parse & Load
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="modal-body">
-        <p>
-          Paste some text here. 
-          <br>
-          <em>
-            <i class="icon-exclamation-sign">
-            </i>This
-            will overwrite your current lyrics, and remove all timestamps
-            that have already been assigned!
-          </em>
-        </p>
-        <label class="radio-inline">
-          <input type="radio" name="optradio" id="plainText" checked>Plain-Text
-        </label>
-        <label class="radio-inline">
-          <input type="radio" name="optradio" id="LRC">LRC
-        </label>
-        <textarea>
-        </textarea>
-        <br>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary button action" data-dismiss="modal">Parse & Load</button>
-      </div></div></div>
     </div>
     <div id="export" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Export
-        </h4>
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;
+            </button>
+            <h4 class="modal-title">Export
+            </h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              Your file in ELRC format.
+              <br>
+            </p>
+            <textarea>
+            </textarea>
+            <br>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary button action" data-dismiss="modal">Download
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="modal-body">
-        <p>
-          Your file in ELRC format.
-          <br>
-        </p>
-        <textarea>
-        </textarea>
-        <br>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary button action" data-dismiss="modal">Download</button>
-      </div></div></div>
     </div>
     <div id="audioSettings" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Audio Settings
-        </h4>
-      </div>
-      <div class="modal-body">
-        <p>
-          Change settings for the audio.
-          <br>
-        </p>
-        <input type="text" class="form-control" id="audioURL" placeholder="http://">
-        <button type="button" class="btn importAudio">Import music from URL
-        </button>
-        <br>
-        <input type="text" class="form-control" id="ID" placeholder="ID#">
-        <button type="button" class="btn importID">Import music and lyrics from Karaoke
-        </button>
-        <br>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;
+            </button>
+            <h4 class="modal-title">Audio Settings
+            </h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              Change settings for the audio.
+              <br>
+            </p>
+            <form>
+              <p>
+                Import music from URL
+              </p>
+              <div class="input-group">
+                <input type="text" class="form-control" id="audioURL" placeholder="http://">
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default importAudio">
+                    <i class="glyphicon glyphicon-search">
+                    </i>
+                  </button>
+                </div>
+              </div>
+              <br>
+              <p>
+                Import music and lyrics from Karaoke
+              </p>
+              <div class="input-group">
+                <input type="text" class="form-control" id="ID" placeholder="ID#">
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default importID">
+                    <i class="glyphicon glyphicon-search">
+                    </i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+    </script>
     <script src="js/EventEmitter.js">
     </script>
     <script src="js/Blob.js">
