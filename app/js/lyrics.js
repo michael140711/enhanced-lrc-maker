@@ -228,6 +228,10 @@ Lyrics.fromLRC = function(text, duration) {
         for (var i = 0; matches = regex.exec(text); i++){
           text = text.replace(matches[0], " <" + matches[1] + ":" + matches[2] + "> " + matches[3] + " <" + matches[1] + ":" + (parseFloat(matches[2]) + 0.1) + "> END<br>");
         }
+        var regex = /(?:\[)(\d*)(?::)(\S*?)(?:\]) (\S+?)<br>/g;
+        for (var i = 0; matches = regex.exec(text); i++){
+          text = text.replace(matches[0], "[" + matches[1] + ":" + matches[2] + "] " + matches[3] + " <" + matches[1] + ":" + (parseFloat(matches[2]) + 0.1) + "> END<br>");
+        }
       }
     } else {
       text = text.replace(/<br>/g," END<br>")
