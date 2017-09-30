@@ -69,6 +69,31 @@ ELRCMaker.prototype._setupUI = function() {
     this$App.loadMedia(song, song);
   }
                            );
+  $('.importID').click(function() {
+    $('#audioSettings').modal("hide");
+    var ID = document.getElementById("ID").value;
+    var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      $('#import textarea').val(this.responseText);
+      $("#LRC").prop('checked', true);
+	  $('#import').modal();
+    }
+  };
+  xmlhttp.open("GET", "http://schindlershadow.com/games/Karaoke/tools/getLyrics.php?q=" + ID, true);
+  xmlhttp.send();
+    
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      this$App.loadMedia(this.responseText, this.responseText);
+    }
+  };
+  xmlhttp.open("GET", "http://schindlershadow.com/games/Karaoke/tools/getFromDB.php?select=file&id=" + ID, true);
+  xmlhttp.send();
+    
+  }
+                           );
   // Setup toolbar buttons
   $('.audio-settings').click(function() {
     $('#audioSettings').modal();
