@@ -151,7 +151,9 @@ Lyrics.prototype.toELRC = function() {
     else {
       isNewLine = false
     }
-    result += ' ' + tmpWord;
+    // Add a space only when this token ends a word
+    var leadingSep = (word.noSpaceAfter === true) ? '' : ' ';
+    result += leadingSep + tmpWord;
     isFirstWord = false;
   }
   return result;
@@ -181,6 +183,158 @@ Lyrics.fromJSON = function(json, duration) {
   lyrics.push.apply(lyrics, words);
   return lyrics;
 };
+
+/**
+ * Split a word into syllables using a very naive heuristic.
+ * Falls back to the original word when no syllables are found.
+ * @param word
+ * @return {Array<String>}
+ */
+Lyrics.splitIntoSyllables = function(word) {
+  // Keep line-break tokens intact
+  if (word.indexOf('<br>') !== -1) {
+    return [word];
+  }
+  // Separate leading/trailing punctuation to avoid splitting inside
+  var m = word.match(/^(\W*)([A-Za-z][A-Za-z\']*)(\W*)$/);
+  if (!m) {
+    // Non-standard token, return as-is
+    return [word];
+  }
+  var lead = m[1] || '';
+  var core = m[2] || '';
+  var tail = m[3] || '';
+
+  var lower = core.toLowerCase();
+
+  // Simple exceptions to improve common cases
+  var exceptions = {
+    'every': ['ev','ery'],
+    'either': ['ei','ther'],
+    'neither': ['nei','ther'],
+    'like': ['like']
+  };
+  if (exceptions[lower]) {
+    // Rebuild with original casing using substring slices
+    var out = [];
+    var pos = 0;
+    for (var ei = 0; ei < exceptions[lower].length; ei++) {
+      var seg = exceptions[lower][ei];
+      out.push(core.substr(pos, seg.length));
+      pos += seg.length;
+    }
+    // Attach punctuation to outer edges
+    out[0] = lead + out[0];
+    out[out.length - 1] = out[out.length - 1] + tail;
+    return out;
+  }
+
+  // Helper predicates
+  function isVowel(ch, idx) {
+    if (!ch) return false;
+    ch = ch.toLowerCase();
+    if (ch === 'y') {
+      // Treat 'y' as vowel when not at the start and surrounded by consonants
+      return idx > 0;
+    }
+    return 'aeiou'.indexOf(ch) !== -1;
+  }
+
+  // Build syllables using a heuristic: onset + nucleus + coda
+  var parts = [];
+  var i = 0;
+  while (i < core.length) {
+    var start = i;
+    // Onset: consecutive consonants (but keep last for possible next onset)
+    while (i < core.length && !isVowel(core[i], i)) i++;
+    // Nucleus: at least one vowel, include diphthongs
+    if (i < core.length && isVowel(core[i], i)) {
+      i++;
+      // include subsequent vowels (diphthongs like ai, ei, oa, oo, etc.)
+      while (i < core.length && isVowel(core[i], i)) i++;
+    }
+    // Tentative end at i; lookahead to distribute consonant cluster
+    var j = i;
+    // Collect following consonants until next vowel
+    while (j < core.length && !isVowel(core[j], j)) j++;
+    // Decide split point between current syllable and next based on cluster size
+    var cCluster = core.substring(i, j);
+    var split = i; // by default, keep consonants with current syllable (VC-CV -> VC)
+    if (cCluster.length > 0 && j < core.length) {
+      // There is another syllable coming (since a vowel exists at j)
+      // Prefer VC-CV unless the leading of next is an allowed onset digraph
+      var digraphs = ['ch','sh','th','ph','wh','ck','gh','ng','qu'];
+      var nextOnset2 = cCluster.substr(cCluster.length - 1, 1) + core[j];
+      var nextOnset3 = (cCluster.length >= 2) ? cCluster.substr(cCluster.length - 2) + core[j] : '';
+      // Default split: leave one consonant for next onset (VCCV -> VC-CV)
+      split = i + cCluster.length - 1;
+      if (digraphs.indexOf(cCluster.substr(cCluster.length - 1, 1) + core[j]) !== -1) {
+        // Move that consonant to next syllable to form digraph onset
+        split = i + cCluster.length - 1;
+      }
+      if (digraphs.indexOf(cCluster.substr(cCluster.length - 2)) !== -1) {
+        // Keep digraph together as coda or move both to next onset if possible
+        split = Math.max(i + cCluster.length - 2, start + 1);
+      }
+    } else {
+      // No more vowels ahead; keep the rest in this syllable
+      split = j;
+    }
+    var part = core.substring(start, split);
+    if (part.length === 0) {
+      // Safety fallback to avoid infinite loop
+      part = core.substring(start, i);
+    }
+    parts.push(part);
+    i = split;
+  }
+
+  // Post-processing fixes
+  if (parts.length > 1) {
+    var last = core.substring(parts.join('').length);
+    if (last) parts.push(last);
+  }
+  // Remove empties
+  parts = parts.filter(function(p){ return p && p.length; });
+
+  // If the last syllable is just 'e' (silent e), merge with previous
+  if (parts.length > 1 && parts[parts.length - 1].toLowerCase() === 'e') {
+    parts[parts.length - 2] += parts[parts.length - 1];
+    parts.pop();
+  }
+  // If the last syllable is a single 'y', merge with previous (e.g., every)
+  if (parts.length > 1 && parts[parts.length - 1].toLowerCase() === 'y') {
+    parts[parts.length - 2] += parts[parts.length - 1];
+    parts.pop();
+  }
+  // Rebalance if next starts with 'h' and previous ends with c/p/s/t to form digraph
+  for (var k = 0; k < parts.length - 1; k++) {
+    var prev = parts[k];
+    var next = parts[k+1];
+    if (next.charAt(0).toLowerCase() === 'h') {
+      var lastCh = prev.charAt(prev.length - 1).toLowerCase();
+      if (['c','p','s','t'].indexOf(lastCh) !== -1) {
+        parts[k] = prev.slice(0, -1);
+        parts[k+1] = prev.slice(-1) + next;
+      }
+    }
+  }
+
+  // Map back to original casing via slicing
+  var result = [];
+  var pos = 0;
+  for (var si = 0; si < parts.length; si++) {
+    var segLen = parts[si].length;
+    result.push(core.substr(pos, segLen));
+    pos += segLen;
+  }
+  // Attach punctuation
+  if (result.length) {
+    result[0] = lead + result[0];
+    result[result.length - 1] = result[result.length - 1] + tail;
+  }
+  return result.length ? result : [word];
+};
 /**
  * Creates a new instance based on the given text.
  *
@@ -188,22 +342,39 @@ Lyrics.fromJSON = function(json, duration) {
  * @param duration
  * @return {Lyrics}
  */
-Lyrics.fromText = function(text, duration) {
+Lyrics.fromText = function(text, duration, mode) {
   if (!duration) {
     duration = 1;
   }
+  mode = mode || 'words';
   //add <br> tag to track newline and display newline on gui
   text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").replace(/^\s*[\r\n]/gm,"").trim().replace(/(?:\r\n|\r|\n)/g, ' END<br>\n');
   if (!(text.match(/END<br>\n$/g))) {
     text += ' END<br>\n';
   }
-  var splitted = $.map(text.split(/\s+/g), function(item) {
+  var splitted = [];
+  var tokens = text.split(/\s+/g);
+  tokens.forEach(function(item) {
     // do not add if blank word or line
-    if (item && item != " END<br>")
-      return {
-        text: item.trim(), time: duration};
-  }
-                      );
+    if (item && item != " END<br>") {
+      if (mode === 'syllables') {
+        var syls = Lyrics.splitIntoSyllables(item.trim());
+        syls.forEach(function(syl, idx) {
+          var isLast = (idx === syls.length - 1);
+          var token = { text: syl, time: duration };
+          // No space between syllables inside a word; add space after last only
+          token.noSpaceAfter = !isLast;
+          // Also avoid trailing space after a line break token
+          if (syl.indexOf('<br>') !== -1) token.noSpaceAfter = true;
+          splitted.push(token);
+        });
+      } else {
+        var t = { text: item.trim(), time: duration };
+        if (t.text.indexOf('<br>') !== -1) t.noSpaceAfter = true;
+        splitted.push(t);
+      }
+    }
+  });
   var lyrics = new Lyrics(duration);
   lyrics.push.apply(lyrics, splitted);
   return lyrics;
@@ -215,11 +386,12 @@ Lyrics.fromText = function(text, duration) {
  * @param duration
  * @return {Lyrics}
  */
-Lyrics.fromLRC = function(text, duration) {
+Lyrics.fromLRC = function(text, duration, mode) {
   var isElrc = (text.toString().match(/(?:\<)(\d*)(?::)(\S*?)(?:\>)/i) != null) ? true : false;;
   var offset = 0;
   var tim = [];
   var lyrics = [];
+  mode = mode || 'words';
   text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").replace(/^\s*[\r\n]/gm,"").trim().replace(/(?:\r\n|\r|\n)/g, '<br>\n') + "<br>\n";
   if (isElrc) {
       if (!text.match(/(?:\<)(\d*)(?::)(\S*?)(?:\>)<br>/g)) {
@@ -263,24 +435,53 @@ Lyrics.fromLRC = function(text, duration) {
     if (isElrc) {
       var splitted = [];
       for (var i = 0; i < lyrics.length; i++) {
-        var tmparry = $.map(lyrics[i], function(item, index) {
-        if (item && item != " END<br>") {
-
-          return {text: item.trim(), time: tim[i][index] + offset};
+        var tmparry = [];
+        for (var j = 0; j < lyrics[i].length; j++) {
+          var item = lyrics[i][j];
+          if (item && item != " END<br>") {
+            if (mode === 'syllables') {
+              var syls = Lyrics.splitIntoSyllables(item.trim());
+              syls.forEach(function(syl, sIdx) {
+                var token = { text: syl, time: tim[i][j] + offset + (sIdx/100) };
+                token.noSpaceAfter = (sIdx !== syls.length - 1) || (syl.indexOf('<br>') !== -1);
+                tmparry.push(token);
+              });
+            } else {
+              var t = { text: item.trim(), time: tim[i][j] + offset };
+              if (t.text.indexOf('<br>') !== -1) t.noSpaceAfter = true;
+              tmparry.push(t);
+            }
+          }
         }
-        });
         splitted = splitted.concat(tmparry);
       }
     } else {
       var splitted = [];
       for (var i = 0; i < lyrics.length; i++) {
-        var tmparry = $.map(lyrics[i].split(/\s+/g), function(item, index) {
-        if (item && item != " END<br>")
-          return {text: item.trim(), time: tim[i] + offset + (index/100)};
-      });
+        var tmparry = [];
+        var idx = 0;
+        var words = lyrics[i].split(/\s+/g);
+        for (var w = 0; w < words.length; w++) {
+          var item = words[w];
+          if (item && item != " END<br>") {
+            if (mode === 'syllables') {
+              var syls2 = Lyrics.splitIntoSyllables(item.trim());
+              syls2.forEach(function(syl, sIdx) {
+                var token2 = { text: syl, time: tim[i] + offset + (idx/100) };
+                token2.noSpaceAfter = (sIdx !== syls2.length - 1) || (syl.indexOf('<br>') !== -1);
+                tmparry.push(token2);
+                idx++;
+              });
+            } else {
+              var t2 = { text: item.trim(), time: tim[i] + offset + (idx/100) };
+              if (t2.text.indexOf('<br>') !== -1) t2.noSpaceAfter = true;
+              tmparry.push(t2);
+              idx++;
+            }
+          }
+        }
         splitted = splitted.concat(tmparry);
       }
-
     }
 
     return splitted;
@@ -508,7 +709,11 @@ LyricsBox.prototype.update = function() {
     )(word, index);
     word.dom = elem;
     this.container.append(elem);
-    this.container.append(' ');
+    // Preserve original spacing: for syllable grouping, do not insert spaces
+    // between syllables inside a word. Default (undefined) means add space.
+    if (!(word.noSpaceAfter === true)) {
+      this.container.append(' ');
+    }
   }
   // As timestamps are assigned and removed, update the style of the words
   this.lyrics.on('timeChanged', function(index, time) {

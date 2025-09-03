@@ -11,6 +11,7 @@ ELRCMaker = function() {
   this.lyricsBox = new LyricsBox('#lyrics', media);
   this.lyrics = null;
   this.loadedFilename = null;
+  this.groupingMode = 'words';
   self = this;
   // The Lyrics object needs the duration, not available right away.
   $(media).on('durationchange loadedmetadata',
@@ -42,8 +43,12 @@ ELRCMaker.prototype._setupUI = function() {
   $('.slower').click(function() {
     this$App.setPlaybackRate('-0.1');
   }
-                    );
+                      );
   this.setPlaybackRate(1.0);
+  $('#grouping-mode').change(function() {
+    this$App.groupingMode = this.value;
+  }
+                          );
   // Setup position display
   function updatePosition() {
     var text;
@@ -271,10 +276,10 @@ ELRCMaker.prototype.setVideoMode = function(on_or_off) {
 ELRCMaker.prototype.loadLyrics = function(lyrics) {
   if (!(lyrics instanceof Lyrics)) {
     if (document.getElementById("plainText").checked) {
-      lyrics = Lyrics.fromText(lyrics, this.media.duration);
+      lyrics = Lyrics.fromText(lyrics, this.media.duration, this.groupingMode);
     }
     else if (document.getElementById("LRC").checked) {
-      lyrics = Lyrics.fromLRC(lyrics, this.media.duration);
+      lyrics = Lyrics.fromLRC(lyrics, this.media.duration, this.groupingMode);
     }
   }
   this.lyrics = lyrics;
