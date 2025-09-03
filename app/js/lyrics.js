@@ -140,10 +140,10 @@ Lyrics.prototype.toELRC = function() {
     }
     // Start a new line when: This is the first line, OR: is the word after a newline
     if (isNewLine || isFirstWord) {
-      result += '\n['+Lyrics.toTimer((word.time || 0))+']';
+      result += '['+Lyrics.toTimer((word.time || 0))+']<' + Lyrics.toTimer((word.time || 0)) + '>';
     }
     else if (word.time) {
-      result += ' <'+Lyrics.toTimer(word.time)+'>';
+      result += '<'+Lyrics.toTimer(word.time)+'>';
     }
     if (word.text.includes("<br>") && word.time) {
       isNewLine = true;
@@ -239,11 +239,11 @@ Lyrics.fromLRC = function(text, duration) {
     	text += ' END<br>\n';
       }
     }
-  
+
   function defined(data) {
   		return data != 'undefined';
   }
-  // parsing the Lyrics 
+  // parsing the Lyrics
   function processLyrics(allText) {
     var hasOffset = (allText.match(/(?:\[offset:)(.*)(?:])/i) != null) ? true : false;
     if(hasOffset) {
@@ -253,19 +253,19 @@ Lyrics.fromLRC = function(text, duration) {
       //console.log("Offset: " + matches[1]);
       offset = matches[1] / 1000;
     }
-    // This will only divide with respect to new lines 
+    // This will only divide with respect to new lines
     allTextLines = allText.split(/\r\n|\n/);
     //isElrc = (allTextLines.toString().match(/(?:\<)(\d*)(?::)(\S*?)(?:\>)/i) != null) ? true : false;
     next();
     tim = tim.filter(defined);
     lyrics = lyrics.filter(defined);
-    
+
     if (isElrc) {
       var splitted = [];
       for (var i = 0; i < lyrics.length; i++) {
         var tmparry = $.map(lyrics[i], function(item, index) {
         if (item && item != " END<br>") {
-          
+
           return {text: item.trim(), time: tim[i][index] + offset};
         }
         });
@@ -275,23 +275,23 @@ Lyrics.fromLRC = function(text, duration) {
       var splitted = [];
       for (var i = 0; i < lyrics.length; i++) {
         var tmparry = $.map(lyrics[i].split(/\s+/g), function(item, index) {
-        if (item && item != " END<br>") 
+        if (item && item != " END<br>")
           return {text: item.trim(), time: tim[i] + offset + (index/100)};
       });
         splitted = splitted.concat(tmparry);
       }
-      
+
     }
-    
+
     return splitted;
   }
   function next() {
     for (i = 0; i < allTextLines.length; i++) {
-      if (allTextLines[i].search(/^(\[)(\d*)(:)(.*)(\])(.*)/i) >= 0) // any line without the prescribed format wont enter this loop 
+      if (allTextLines[i].search(/^(\[)(\d*)(:)(.*)(\])(.*)/i) >= 0) // any line without the prescribed format wont enter this loop
       {
         line = allTextLines[i].match(/^(\[)(\d*)(:)(.*)(\])(.*)/i);
         var time = (parseInt(line[2]) * 60) + parseFloat(line[4]);
-        // will give seconds 
+        // will give seconds
         // if file is a Enhanced format lrc file
         if (isElrc){
           tim[i] = [];
@@ -306,7 +306,7 @@ Lyrics.fromLRC = function(text, duration) {
             //output.push(matches[1]);
             //console.log(matches[1] + matches[2] + matches[3]);
             tim[i][x] = (parseInt(matches[1]) * 60) + parseFloat(matches[2]);
-            // will give seconds 
+            // will give seconds
             lyrics[i][x] = matches[3];
           }
           //if proper elrc file, it will have another time tag at the end
@@ -321,16 +321,16 @@ Lyrics.fromLRC = function(text, duration) {
           // file is a normal lrc file
           tim[i] = time;
           lyrics[i] = line[6];
-          //will give lyrics 
+          //will give lyrics
         }
       }
     }
   }
-  
-  
-  
+
+
+
   var splitted = processLyrics(text);
-  
+
   var lyrics = new Lyrics(duration);
   lyrics.push.apply(lyrics, splitted);
   return lyrics;
