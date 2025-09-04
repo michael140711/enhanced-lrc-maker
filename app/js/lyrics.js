@@ -151,7 +151,8 @@ Lyrics.prototype.toELRC = function() {
     else {
       isNewLine = false
     }
-    result += ' ' + tmpWord;
+    var spacer = (word.glueToPrev ? '' : ' ');
+    result += spacer + tmpWord;
     isFirstWord = false;
   }
   return result;
@@ -197,13 +198,66 @@ Lyrics.fromText = function(text, duration) {
   if (!(text.match(/END<br>\n$/g))) {
     text += ' END<br>\n';
   }
-  var splitted = $.map(text.split(/\s+/g), function(item) {
+  // Also treat backticks as syllable separators in plain text.
+  var splitted = $.map(text.split(/[\s`]+/g), function(item) {
     // do not add if blank word or line
     if (item && item != " END<br>")
       return {
         text: item.trim(), time: duration};
   }
                       );
+  var lyrics = new Lyrics(duration);
+  lyrics.push.apply(lyrics, splitted);
+  return lyrics;
+};
+
+/**
+ * Creates a new instance based on the given text, additionally splitting
+ * words into syllables separated by backticks (`).
+ *
+ * @param text Input text where syllables within a word are delimited by `
+ * @param duration
+ * @return {Lyrics}
+ */
+Lyrics.fromTextSyllable = function(text, duration) {
+  if (!duration) {
+    duration = 1;
+  }
+  // Maintain the same newline handling as fromText
+  text = text.replace(/ +/g, " ")
+             .replace(/　/g, "")
+             .replace(/ +\n/g, "\n")
+             .replace(/^\s*[\r\n]/gm, "")
+             .trim()
+             .replace(/(?:\r\n|\r|\n)/g, ' END<br>\n');
+  if (!(text.match(/END<br>\n$/g))) {
+    text += ' END<br>\n';
+  }
+  // First split on whitespace to preserve where backticks were used,
+  // then split each word on backticks and glue syllables together visually.
+  var tokens = text.split(/\s+/g);
+  var splitted = [];
+  for (var i = 0; i < tokens.length; i++) {
+    var tok = tokens[i];
+    if (!tok) continue;
+    if (tok === "END<br>") {
+      splitted.push({ text: tok, time: duration });
+      continue;
+    }
+    if (tok.indexOf('`') === -1) {
+      splitted.push({ text: tok.trim(), time: duration });
+      continue;
+    }
+    var parts = tok.split('`');
+    for (var p = 0; p < parts.length; p++) {
+      if (!parts[p]) continue;
+      splitted.push({
+        text: parts[p].trim(),
+        time: duration,
+        glueToPrev: (p > 0)
+      });
+    }
+  }
   var lyrics = new Lyrics(duration);
   lyrics.push.apply(lyrics, splitted);
   return lyrics;
@@ -274,10 +328,11 @@ Lyrics.fromLRC = function(text, duration) {
     } else {
       var splitted = [];
       for (var i = 0; i < lyrics.length; i++) {
-        var tmparry = $.map(lyrics[i].split(/\s+/g), function(item, index) {
-        if (item && item != " END<br>")
-          return {text: item.trim(), time: tim[i] + offset + (index/100)};
-      });
+        var words = lyrics[i].split(/[\s`]+/g);
+        var tmparry = $.map(words, function(item, index) {
+          if (item && item != " END<br>")
+            return {text: item.trim(), time: tim[i] + offset + (index/100)};
+        });
         splitted = splitted.concat(tmparry);
       }
 
@@ -508,7 +563,9 @@ LyricsBox.prototype.update = function() {
     )(word, index);
     word.dom = elem;
     this.container.append(elem);
-    this.container.append(' ');
+    // Add a visible space unless the next token is glued to this one
+    if (!(this.lyrics[index+1] && this.lyrics[index+1].glueToPrev))
+      this.container.append(' ');
   }
   // As timestamps are assigned and removed, update the style of the words
   this.lyrics.on('timeChanged', function(index, time) {

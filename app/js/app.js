@@ -143,6 +143,10 @@ ELRCMaker.prototype._setupUI = function() {
   // The load-text dialog.
   $('#import .button').on('click', function() {
     var text = $('#import textarea').val();
+    // If input contains backticks and LRC is not selected, prefer syllable mode
+    if (!document.getElementById('LRC').checked && /`/.test(text)) {
+      $("#plainTextSyllable").prop('checked', true);
+    }
     this$App.loadLyrics(text);
     // Close dialog
     $('#import').modal('hide');
@@ -270,11 +274,19 @@ ELRCMaker.prototype.setVideoMode = function(on_or_off) {
  */
 ELRCMaker.prototype.loadLyrics = function(lyrics) {
   if (!(lyrics instanceof Lyrics)) {
-    if (document.getElementById("plainText").checked) {
-      lyrics = Lyrics.fromText(lyrics, this.media.duration);
+    var raw = lyrics;
+    var hasBackticks = /`/.test(raw);
+    if (document.getElementById("plainTextSyllable").checked ||
+        (document.getElementById("plainText").checked && hasBackticks)) {
+      // Prefer syllable parsing when explicitly selected, or when
+      // plain text is selected but the input contains backticks.
+      lyrics = Lyrics.fromTextSyllable(raw, this.media.duration);
+    }
+    else if (document.getElementById("plainText").checked) {
+      lyrics = Lyrics.fromText(raw, this.media.duration);
     }
     else if (document.getElementById("LRC").checked) {
-      lyrics = Lyrics.fromLRC(lyrics, this.media.duration);
+      lyrics = Lyrics.fromLRC(raw, this.media.duration);
     }
   }
   this.lyrics = lyrics;
