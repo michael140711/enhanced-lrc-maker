@@ -152,7 +152,9 @@ Lyrics.prototype.toELRC = function() {
       isNewLine = false
     }
     var spacer = (word.glueToPrev ? '' : ' ');
-    result += spacer + tmpWord;
+    var nextWord = this[i+1];
+    var spacer = (nextWord && nextWord.glueToPrev) || word.text.includes("<br>") ? '' : ' ';
+    result += tmpWord + spacer;
     isFirstWord = false;
   }
   return result;
