@@ -1,3 +1,7 @@
+I am making some updates and bug fixes to it. Adding a function where you can make syllable on top of each words. 
+
+
+---
 Quick and dirty webapp to create `Enhanced LRC files`__ by mouse clicking
 and button pressing.
 
