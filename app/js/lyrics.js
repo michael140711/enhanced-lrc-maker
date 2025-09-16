@@ -129,15 +129,49 @@ Lyrics.prototype.toELRC = function() {
   var result = '';
   var isNewLine = false;
   var isFirstWord = true;
+
   for (var i=0; i<this.length; i++) {
     var word = this[i];
     var tmpWord = "";
+    var hasSharpChar = false;
+    var hasPercentChar = false;
+    var skipThisWord = false;
+
+    // Check if this is an END<br> that should be skipped due to previous word ending with %
+    if (word.text.includes("END<br>")) {
+      // Check if previous word ended with %
+      for (var j=i-1; j>=0; j--) {
+        if (this[j].text.includes("END<br>")) continue;
+        if (this[j].text.endsWith("%") || this[j].text.endsWith("% ")) {
+          skipThisWord = true; // Skip this END entirely
+        }
+        break;
+      }
+    }
+
+    if (skipThisWord) {
+      continue; // Skip this END word entirely
+    }
+
     if (word.text.includes("<br>")) {
       tmpWord = word.text.replace("END<br>","\n");
     }
     else {
       tmpWord = word.text;
+      // Check if the word contains # character
+      if (tmpWord.includes("#")) {
+        hasSharpChar = true;
+        // Remove # and any spaces around it for output
+        tmpWord = tmpWord.replace(/\s*#\s*/g, '');
+      }
+      // Check if the word ends with % character
+      if (tmpWord.endsWith("%")) {
+        hasPercentChar = true;
+        // Remove % from output
+        tmpWord = tmpWord.replace(/%\s*$/, '');
+      }
     }
+
     // Start a new line when: This is the first line, OR: is the word after a newline
     if (isNewLine || isFirstWord) {
       result += '['+Lyrics.toTimer((word.time || 0))+']<' + Lyrics.toTimer((word.time || 0)) + '>';
@@ -145,16 +179,46 @@ Lyrics.prototype.toELRC = function() {
     else if (word.time) {
       result += '<'+Lyrics.toTimer(word.time)+'>';
     }
+
     if (word.text.includes("<br>") && word.time) {
       isNewLine = true;
     }
     else {
       isNewLine = false
     }
+
     var spacer = (word.glueToPrev ? '' : ' ');
     var nextWord = this[i+1];
     var spacer = (nextWord && nextWord.glueToPrev) || word.text.includes("<br>") ? '' : ' ';
-    result += tmpWord + spacer;
+
+    // If word had # character, don't add spacer after it
+    if (hasSharpChar) {
+      spacer = '';
+    }
+
+    // If word ends with %, add timestamp of next line's first word and newline
+    if (hasPercentChar) {
+      // Find the next line's first word (after skipping END<br>)
+      var nextLineFirstWord = null;
+      for (var j = i + 1; j < this.length; j++) {
+        if (this[j].text.includes("END<br>") || this[j].text.includes("<br>")) {
+          continue; // Skip END markers and <br> tags
+        }
+        // Found first word of next line
+        nextLineFirstWord = this[j];
+        break;
+      }
+
+      if (nextLineFirstWord && nextLineFirstWord.time) {
+        result += tmpWord + '<' + Lyrics.toTimer(nextLineFirstWord.time) + '>\n';
+      } else {
+        result += tmpWord + '\n';
+      }
+      isNewLine = true; // Next word should be treated as start of new line
+    } else {
+      result += tmpWord + spacer;
+    }
+
     isFirstWord = false;
   }
   return result;
@@ -522,7 +586,34 @@ LyricsBox.prototype.update = function() {
   this.container.empty();
   for (var index = 0; index<this.lyrics.length; index++) {
     var word = this.lyrics[index];
-    var elem = $('<span>'+(word.text?word.text:'-')+'</span>');
+
+    // Check if this is an END word that should be hidden due to previous word ending with %
+    var shouldHideEnd = false;
+    if (word.text && word.text.includes("END<br>")) {
+      // Check if previous word ended with %
+      for (var j=index-1; j>=0; j--) {
+        if (this.lyrics[j].text.includes("END<br>")) continue;
+        if (this.lyrics[j].text.endsWith("%") || this.lyrics[j].text.endsWith("% ")) {
+          shouldHideEnd = true;
+        }
+        break;
+      }
+    }
+
+    // Skip displaying this END word if previous word ended with %
+    if (shouldHideEnd) {
+      continue;
+    }
+
+    // Prepare display text - keep # visible for UI, but remove % characters
+    var displayText = word.text ? word.text : '-';
+    if (displayText !== '-') {
+      // Keep # character visible in UI (shows pause to user)
+      // Only remove % character for display
+      displayText = displayText.replace(/%/g, '');
+    }
+
+    var elem = $('<span>'+displayText+'</span>');
     setTimeForSpan(elem, word.time);
     // TODO: Can be sped up by using a single handler for all spans.
     (function(word, index)
@@ -565,9 +656,15 @@ LyricsBox.prototype.update = function() {
     )(word, index);
     word.dom = elem;
     this.container.append(elem);
+
+    // Check if this word ends with % - if so, add a line break for UI display
+    if (word.text && word.text.endsWith('%')) {
+      this.container.append('<br>');
+    }
     // Add a visible space unless the next token is glued to this one
-    if (!(this.lyrics[index+1] && this.lyrics[index+1].glueToPrev))
+    else if (!(this.lyrics[index+1] && this.lyrics[index+1].glueToPrev)) {
       this.container.append(' ');
+    }
   }
   // As timestamps are assigned and removed, update the style of the words
   this.lyrics.on('timeChanged', function(index, time) {
