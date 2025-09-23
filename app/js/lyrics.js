@@ -132,12 +132,22 @@ Lyrics.prototype.toELRC = function() {
   for (var i=0; i<this.length; i++) {
     var word = this[i];
     var tmpWord = "";
-    if (word.text.includes("<br>")) {
+    var isSharpWord = false;
+    var isPercentLine = false;
+
+    if (word.text.includes("END<br>")) {
       tmpWord = word.text.replace("END<br>","\n");
-    }
-    else {
+    } else if (word.text.includes("#")) {
+      // Handle # character - remove space and # for more accurate timing
+      tmpWord = word.text.replace(/\s*#\s*/g,"");
+      isSharpWord = true;
+    } else if (word.text.includes("<br>")) {
+      tmpWord = word.text.replace("<br>","\n");
+      isPercentLine = true;
+    } else {
       tmpWord = word.text;
     }
+
     // Start a new line when: This is the first line, OR: is the word after a newline
     if (isNewLine || isFirstWord) {
       result += '['+Lyrics.toTimer((word.time || 0))+']<' + Lyrics.toTimer((word.time || 0)) + '>';
@@ -145,15 +155,35 @@ Lyrics.prototype.toELRC = function() {
     else if (word.time) {
       result += '<'+Lyrics.toTimer(word.time)+'>';
     }
-    if (word.text.includes("<br>") && word.time) {
+
+    if ((word.text.includes("<br>") && word.time) || isPercentLine) {
       isNewLine = true;
     }
     else {
       isNewLine = false
     }
-    var spacer = (word.glueToPrev ? '' : ' ');
+
     var nextWord = this[i+1];
-    var spacer = (nextWord && nextWord.glueToPrev) || word.text.includes("<br>") ? '' : ' ';
+    var spacer = '';
+
+    // Handle spacing logic
+    if (isSharpWord) {
+      // For # words, no space before or after
+      spacer = '';
+    } else if (nextWord && nextWord.glueToPrev) {
+      // Next word is glued to this one
+      spacer = '';
+    } else if (word.text.includes("<br>")) {
+      // Line break, no space
+      spacer = '';
+    } else if (nextWord && nextWord.text.includes("#")) {
+      // Next word has #, add a space before it
+      spacer = ' ';
+    } else {
+      // Normal spacing
+      spacer = ' ';
+    }
+
     result += tmpWord + spacer;
     isFirstWord = false;
   }
@@ -196,18 +226,38 @@ Lyrics.fromText = function(text, duration) {
     duration = 1;
   }
   //add <br> tag to track newline and display newline on gui
-  text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").replace(/^\s*[\r\n]/gm,"").trim().replace(/(?:\r\n|\r|\n)/g, ' END<br>\n');
-  if (!(text.match(/END<br>\n$/g))) {
-    text += ' END<br>\n';
+  // Handle % at end of lines - don't add END<br> for those lines
+  text = text.replace(/ +/g, " ").replace(/　/g,"").replace(/ +\n/g,"\n").replace(/^\s*[\r\n]/gm,"").trim();
+
+  // Split into lines to handle % endings
+  var lines = text.split(/(?:\r\n|\r|\n)/g);
+  var processedLines = [];
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+
+    // Check if line ends with %
+    if (line.endsWith('%')) {
+      // // Remove % and add %<br> marker
+      // processedLines.push(line.slice(0, -1).trim() + ' %<br>');
+      processedLines.push(line)
+    } else {
+      // Normal line with END<br>
+      processedLines.push(line + ' END<br>');
+    }
   }
+
+  text = processedLines.join('\n');
+
   // Also treat backticks as syllable separators in plain text.
   var splitted = $.map(text.split(/[\s`]+/g), function(item) {
     // do not add if blank word or line
-    if (item && item != " END<br>")
+    if (item && item != " END<br>" && item != "%")
       return {
         text: item.trim(), time: duration};
-  }
-                      );
+  });
+
   var lyrics = new Lyrics(duration);
   lyrics.push.apply(lyrics, splitted);
   return lyrics;
@@ -230,11 +280,29 @@ Lyrics.fromTextSyllable = function(text, duration) {
              .replace(/　/g, "")
              .replace(/ +\n/g, "\n")
              .replace(/^\s*[\r\n]/gm, "")
-             .trim()
-             .replace(/(?:\r\n|\r|\n)/g, ' END<br>\n');
-  if (!(text.match(/END<br>\n$/g))) {
-    text += ' END<br>\n';
+             .trim();
+
+  // Split into lines to handle % endings
+  var lines = text.split(/(?:\r\n|\r|\n)/g);
+  var processedLines = [];
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+
+    // Check if line ends with %
+    if (line.endsWith('%')) {
+      // Remove % and add %<br> marker
+      // processedLines.push(line.slice(0, -1).trim() + ' %<br>');
+      processedLines.push(line)
+    } else {
+      // Normal line with END<br>
+      processedLines.push(line + ' END<br>');
+    }
   }
+
+  text = processedLines.join('\n');
+
   // First split on whitespace to preserve where backticks were used,
   // then split each word on backticks and glue syllables together visually.
   var tokens = text.split(/\s+/g);
@@ -242,7 +310,7 @@ Lyrics.fromTextSyllable = function(text, duration) {
   for (var i = 0; i < tokens.length; i++) {
     var tok = tokens[i];
     if (!tok) continue;
-    if (tok === "END<br>") {
+    if (tok === "END<br>" || tok === "%") {
       splitted.push({ text: tok, time: duration });
       continue;
     }
@@ -522,6 +590,11 @@ LyricsBox.prototype.update = function() {
   this.container.empty();
   for (var index = 0; index<this.lyrics.length; index++) {
     var word = this.lyrics[index];
+    if (word.text.includes("%")) {
+    //   this.container.append('<br>');
+    //   continue;
+      word.text = word.text.replace("%","<br>");
+    }
     var elem = $('<span>'+(word.text?word.text:'-')+'</span>');
     setTimeForSpan(elem, word.time);
     // TODO: Can be sped up by using a single handler for all spans.
